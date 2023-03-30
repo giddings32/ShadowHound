@@ -46,42 +46,52 @@ while true; do
 				1)
 					echo ""
 					cat *_users.json | jq '.data[].Properties | select( .enabled == true ) | .name'
+					echo ""
 					;;
 				2)
 					echo ""
 					cat *_users.json | jq '.data[].Properties | select( .enabled == true ) | .name'
+					echo ""
 					;;
 				3)
 					echo ""
 					cat *_users.json | jq '.data[].Properties | select( .enabled == false ) | .name'
+					echo ""
 					;;
 				4)     	
 					echo ""
 					cat *_users.json | jq -r '.data[].Properties | select( .enabled == true ) | select( .description != null ) | "\u001b[32m" + .name + "\u001b[0m: " + .description' | sort -u | awk -F: '{printf("%s:%s\n", $1, $2)}' | column -t -s ':'
+					echo ""
 					;;
 				5)
 					echo ""
-					cat *_users.json | jq '.data[].Properties | select( .enabled == false ) | select( .description != null ) | .name + "  :  " + .description'
+					cat *_users.json | jq -r '.data[].Properties | select( .enabled == false ) | select( .description != null ) | "\u001b[32m" + .name + "\u001b[0m: " + .description' | sort -u | awk -F: '{printf("%s:%s\n", $1, $2)}' | column -t -s ':'
+					echo ""
 					;;
 				6)
 					echo ""
 					cat *_users.json | jq '.data[].Properties | select( .enabled == true ) | .name + "  :  " + (.lastlogontimestamp|tostring) '
+					echo ""
 					;;
 				7)
 					echo ""
 					cat *_users.json | jq '.data[].Properties | select( .enabled == true ) | select( .pwdlastset > .lastlogontimestamp ) | .name + "  :  " + (.lastlogontimestamp|tostring) '
+					echo ""
 					;;
 				8)
 					echo ""
 					cat *_users.json | jq '.data[].Properties | select( .serviceprincipalnames != [] ) | .name'
+					echo ""
 					;;
 				9)
 					echo ""
 					cat *_users.json | jq -r '.data[] | select( .Aces[].RightName != null ) | "\u001b[32m" + .Properties.name + "\u001b[0m: " + (.Aces | map(.RightName) | join(", "))' | sort -u | awk -F: '{printf("%s:%s\n", $1, $2)}' | column -t -s ':'
+					echo ""
 					;;
 				*)
 					echo ""
 					echo "Error: Invalid option selected."
+					echo ""
 					;;
 			esac
 			;;
