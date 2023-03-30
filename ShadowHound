@@ -1,22 +1,8 @@
 #!/bin/bash
 
-Black="\e[30m"
 Red="\e[31m"
-Green="\033[38;2;0;255;0m"
-Yellow="\e[33m"
 Blue="\e[34m"
-Magenta="\e[35m"
-Cyan="\e[36m"
-LTGray="\e[37m"
-Gray="\e[90m"
-LTRed="\e[91m"
-LTGreen="\e[38;2;152;251;152m"
-LTYellow="\e[93m"
-LTBlue="\e[94m"
-LTMagenta="\e[95m"
-LTCyan="\e[96m"
 NoColor="\e[0m"
-Orange="\033[38;2;255;128;0m"
 
 echo "   _____ __              __               __  __                       __"
 echo "  / ___// /_   ____ ____/ /____ _      __/ / / /____  __  ______  ____/ /"
