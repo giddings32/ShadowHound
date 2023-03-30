@@ -57,7 +57,7 @@ while true; do
 					;;
 				4)     	
 					echo ""
-					cat *_users.json | jq '.data[].Properties | select( .enabled == true ) | select( .description != null ) | .name + "  :  " + .description'
+					cat *_users.json | jq -r '.data[].Properties | select( .enabled == true ) | select( .description != null ) | "\u001b[32m" + .name + "\u001b[0m: " + .description' | sort -u | awk -F: '{printf("%s:%s\n", $1, $2)}' | column -t -s ':'
 					;;
 				5)
 					echo ""
