@@ -208,7 +208,7 @@ while true; do
 
 
 		4)
-			echo "Thank you for using SharpHound Parser!"
+			echo "Thank you for using ShadowHound!"
 			exit
 			;;
 
