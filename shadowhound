@@ -44,12 +44,13 @@ while true; do
 				echo "7.  No Login Since Before Password Reset"
 				echo "8.  Kerberoastable Accounts"
 				echo "9.  User Permissions"
-				echo "10. Back"
+				echo "10. Domain Admin Accounts"
+				echo "0. Back"
 
 				while true; do
 					echo 
 					printf "${Blue}ShadowHound${NoColor} > " && read option
-					if [[ $option =~ ^[1-9]$|^10$ ]]; then
+					if [[ $option =~ ^[0-9]$|^10$ ]]; then
 					#if [ $option -ge 1 ] && [ $option -le 10 ]; then
 						break
 					else
@@ -105,6 +106,13 @@ while true; do
 						;;
 					
 					10)
+						echo ""
+						group_name=$(jq -r '.data[].Properties | select(.name | contains("DOMAIN ADMINS")) | .name' *_groups.json)
+domain_sid=$(jq -r '.data[].Properties | select(.name | contains("DOMAIN ADMINS")) | .domainsid' *_groups.json)
+cat *_users.json | jq --arg domain_sid "$domain_sid" --arg group_name "$group_name" -r '[.data[] | select(.Properties.domainsid == $domain_sid) | select(.Properties.admincount == true) | select(.Properties.enabled == true)] | "\u001b[38;2;152;251;152m" + $group_name + "\u001b[0m: " + (map(.Properties.name) | join(", "))' | sort -u | awk -F: '{printf("%s:%s\n", $1, $2)}' | column -t -s ':'
+						echo ""
+						;;
+					0)
 						a="0"
 						echo ""
 						;;
