@@ -191,12 +191,10 @@ cat *_users.json | jq --arg domain_sid "$domain_sid" --arg group_name "$group_na
 						echo ""
 						;;
 					bye)
-
                                                 echo "Thank you for using ShadowHound!"
                                                 exit
                                                 ;;
                                         exit)
-
                                                 echo "Thank you for using ShadowHound!"
                                                 exit
                                                 ;;
@@ -237,7 +235,6 @@ cat *_users.json | jq --arg domain_sid "$domain_sid" --arg group_name "$group_na
                                                 exit
                                                 ;;
                                         exit)
-
                                                 echo "Thank you for using ShadowHound!"
                                                 exit
                                                 ;;
