@@ -45,7 +45,7 @@ while true; do
 				echo "8.  Kerberoastable Accounts"
 				echo "9.  User Permissions"
 				echo "10. Domain Admin Accounts"
-				echo "0. Back"
+				echo "0.  Back"
 
 				while true; do
 					echo 
