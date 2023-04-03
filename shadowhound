@@ -143,7 +143,7 @@ cat *_users.json | jq --arg domain_sid "$domain_sid" --arg group_name "$group_na
 				while true; do
 					echo 
 					printf "${Blue}ShadowHound${NoColor} > " && read option
-					if [[ "$option" =~ ^(bye|exit[1-6]$) ]]; then
+					if [[ "$option" =~ ^(bye|exit|[1-6]$) ]]; then
 						break
 					else
 						echo -e "${Red}Error:${NoColor} Invalid input. Enter a number 1-6"
@@ -213,7 +213,7 @@ cat *_users.json | jq --arg domain_sid "$domain_sid" --arg group_name "$group_na
 				while true; do
 					echo 
 					printf "${Blue}ShadowHound${NoColor} > " && read option
-					if [[ "$option" =~ ^(bye|exit[1-2]$) ]]; then
+					if [[ "$option" =~ ^(bye|exit|[1-2]$) ]]; then
 						break
 					else
 						echo -e "${Red}Error:${NoColor} Invalid input. Enter a number 1-2"
