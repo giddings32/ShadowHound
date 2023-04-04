@@ -115,24 +115,10 @@ cat *_users.json | jq --arg domain_sid "$domain_sid" --arg group_name "$group_na
 						a="0"
 						echo ""
 						;;
-<<<<<<< HEAD
 					bye|exit)
                                                 echo "Thank you for using ShadowHound!"
                                                 exit
                                                 ;;
-=======
-					bye)
-
-                                                echo "Thank you for using ShadowHound!"
-                                                exit
-                                                ;;
-                                        exit)
-
-                                                echo "Thank you for using ShadowHound!"
-                                                exit
-                                                ;;
-
->>>>>>> f8bfe2fb5fbe7e9c8a8f8bf4e7918ce69431bd13
 				esac
 			done
 			;;
@@ -197,15 +183,7 @@ cat *_users.json | jq --arg domain_sid "$domain_sid" --arg group_name "$group_na
 						a="0"
 						echo ""
 						;;
-<<<<<<< HEAD
 					bye|exit)
-=======
-					bye)
-                                                echo "Thank you for using ShadowHound!"
-                                                exit
-                                                ;;
-                                        exit)
->>>>>>> f8bfe2fb5fbe7e9c8a8f8bf4e7918ce69431bd13
                                                 echo "Thank you for using ShadowHound!"
                                                 exit
                                                 ;;
@@ -241,45 +219,18 @@ cat *_users.json | jq --arg domain_sid "$domain_sid" --arg group_name "$group_na
 						a="0"
 						echo ""
 						;;
-<<<<<<< HEAD
 					bye|exit)
                                                 echo "Thank you for using ShadowHound!"
                                                 exit
                                                 ;;
-=======
-					bye)
-                                                echo "Thank you for using ShadowHound!"
-                                                exit
-                                                ;;
-                                        exit)
-                                                echo "Thank you for using ShadowHound!"
-                                                exit
-                                                ;;
-
->>>>>>> f8bfe2fb5fbe7e9c8a8f8bf4e7918ce69431bd13
 				esac
 
 			done
 			;;
 
-<<<<<<< HEAD
 		bye|exit)
                         echo "Thank you for using ShadowHound!"
                         exit
                         ;;
-=======
-
-		bye)
-                        echo "Thank you for using ShadowHound!"
-                        exit
-                        ;;
-                exit)
-
-                        echo "Thank you for using ShadowHound!"
-                        exit
-                        ;;
-
-
->>>>>>> f8bfe2fb5fbe7e9c8a8f8bf4e7918ce69431bd13
 	esac
 done
