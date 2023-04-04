@@ -18,14 +18,14 @@ while true; do
 	echo "1. Users"
 	echo "2. Computers"
 	echo "3. Groups"
-	echo "4. Exit"
 
 	while true; do
 		echo
 		printf "${Blue}ShadowHound${NoColor} > " && read option
-		if [[ "$option" =~ ^[1-4]$ ]]; then
-			echo ""
-			break	
+		if [[ "$option" =~ ^(bye|exit|[1-3]$) ]]; then
+                        echo ""
+                        break
+
 		else
 			echo -e "${Red}Error:${NoColor} Invalid input. Select an option 1-4"
 		fi
@@ -45,13 +45,12 @@ while true; do
 				echo "8.  Kerberoastable Accounts"
 				echo "9.  User Permissions"
 				echo "10. Domain Admin Accounts"
-				echo "0. Back"
+				echo "0.  Back"
 
 				while true; do
 					echo 
 					printf "${Blue}ShadowHound${NoColor} > " && read option
-					if [[ $option =~ ^[0-9]$|^10$ ]]; then
-					#if [ $option -ge 1 ] && [ $option -le 10 ]; then
+					if [[ $option =~ ^(bye|exit|[0-9]$|^10$) ]]; then	
 						break
 					else
 						echo -e "${Red}Error:${NoColor} Invalid input. Select an Option 1-10"
@@ -116,6 +115,10 @@ cat *_users.json | jq --arg domain_sid "$domain_sid" --arg group_name "$group_na
 						a="0"
 						echo ""
 						;;
+					bye|exit)
+                                                echo "Thank you for using ShadowHound!"
+                                                exit
+                                                ;;
 				esac
 			done
 			;;
@@ -133,7 +136,7 @@ cat *_users.json | jq --arg domain_sid "$domain_sid" --arg group_name "$group_na
 				while true; do
 					echo 
 					printf "${Blue}ShadowHound${NoColor} > " && read option
-					if [[ "$option" =~ ^[1-6]$ ]]; then
+					if [[ "$option" =~ ^(bye|exit|[1-6]$) ]]; then
 						break
 					else
 						echo -e "${Red}Error:${NoColor} Invalid input. Enter a number 1-6"
@@ -180,10 +183,14 @@ cat *_users.json | jq --arg domain_sid "$domain_sid" --arg group_name "$group_na
 						a="0"
 						echo ""
 						;;
+					bye|exit)
+                                                echo "Thank you for using ShadowHound!"
+                                                exit
+                                                ;;
 				esac
 
-				done
-				;;
+			done
+			;;
 
 		3)
 			a="1"
@@ -195,7 +202,7 @@ cat *_users.json | jq --arg domain_sid "$domain_sid" --arg group_name "$group_na
 				while true; do
 					echo 
 					printf "${Blue}ShadowHound${NoColor} > " && read option
-					if [[ "$option" =~ ^[1-2]$ ]]; then
+					if [[ "$option" =~ ^(bye|exit|[1-2]$) ]]; then
 						break
 					else
 						echo -e "${Red}Error:${NoColor} Invalid input. Enter a number 1-2"
@@ -212,16 +219,18 @@ cat *_users.json | jq --arg domain_sid "$domain_sid" --arg group_name "$group_na
 						a="0"
 						echo ""
 						;;
+					bye|exit)
+                                                echo "Thank you for using ShadowHound!"
+                                                exit
+                                                ;;
 				esac
 
 			done
 			;;
 
-
-		4)
-			echo "Thank you for using ShadowHound!"
-			exit
-			;;
-
+		bye|exit)
+                        echo "Thank you for using ShadowHound!"
+                        exit
+                        ;;
 	esac
 done
