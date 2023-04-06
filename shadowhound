@@ -224,12 +224,20 @@ cat *_users.json | jq --arg domain_sid "$domain_sid" --arg group_name "$group_na
 						echo ""
 						objectid=$(cat *_groups.json | jq -r '.data[] | .Aces[].PrincipalSID' | sort -u | paste -sd "|")
 						groups=$(cat *_groups.json | jq -r --arg objectid "$objectid" '.data[] | select( .ObjectIdentifier | test("(\($objectid))")) | select( .Aces[].PrincipalSID == .ObjectIdentifier and ["WriteDacl", "Owns", "WriteOwner", "GenericWrite"]) | .Properties.name' | sort -u )
+						echo "Groups:"
 						while read -r line; do
 							printf "\u001b[38;2;152;251;152m%s\n\u001b[0m" "$line"
 						done <<< "$groups"
 						group_list=$(echo "$groups" | paste -sd '|')
+
 						users=$(cat *_groups.json | jq -r --arg group_list "$group_list" '.data[] | select( .Properties.name | test("(\($group_list))")) | .Members[].ObjectIdentifier' | sort -u | paste -sd "|")
+						echo "Users:"
 						cat *_users.json | jq -r --arg users "$users" '.data[] | select( .ObjectIdentifier | test("(\($users))")) | "\u001b[38;2;152;251;152m" + .Properties.name + "\u001b[0m"' | sort -u
+
+						dc=$(cat *_groups.json | jq -r '.data[] | select(.Properties.samaccountname == "Domain Controllers") | .ObjectIdentifier' | sort -u | paste -sd "|")
+						comps=$(cat *_groups.json | jq -r '.data[] | select(.Properties.name | contains("ENTERPRISE DOMAIN CONTROLLERS")) | .Members[].ObjectIdentifier' | sort -u | paste -sd "|")
+						echo "Computers:"
+						cat *_computers.json | jq -r --arg comps "$comps" --arg dc "$dc" '.data[] | select( .PrimaryGroupSID == $dc) | select(.ObjectIdentifier == $comps ) | "\u001b[38;2;152;251;152m" + .Properties.name + "\u001b[0m"' | sort -u
 						echo ""
 						;;
 					0)
