@@ -2,6 +2,8 @@
 
 Red="\e[31m"
 Blue="\e[34m"
+Green='\u001b[38;2;152;251;152m'
+NoColor2="\u001b[0m"
 NoColor="\e[0m"
 
 echo -e "   _____ __              __              __  __                      ${Blue}__${NoColor}"
@@ -100,7 +102,7 @@ while true; do
 						;;
 					9)
 						echo ""
-						cat *_users.json | jq -r '.data[] | select( .Aces[].RightName != null ) | "\u001b[38;2;152;251;152m" + .Properties.name + "\u001b[0m: " + (.Aces | map(.RightName) | join(", "))' | sort -u | awk -F: '{printf("%s:%s\n", $1, $2)}' | column -t -s ':'
+						cat *_users.json | jq '.data[] | .Properties.name as $name | .Aces[] | [$name, .PrincipalSID, .RightName] | join("|")' | sort | awk -F'|' '{ key=$1" | "$2; if (key in arr) { arr[key]=arr[key]", "$3 } else { arr[key]=$3 } } END { for (key in arr) { print key" | "arr[key] } }' | sort | sed 's/"//g' | awk -F'|' '{ printf "\033[38;2;152;251;152m%s\033[0m | %s | %s\n", $1, $2, $3 }' | column -t -s '|'
 						echo ""
 						;;
 					
@@ -128,15 +130,15 @@ cat *_users.json | jq --arg domain_sid "$domain_sid" --arg group_name "$group_na
 			while [[ ${a} == "1" ]]; do
 				echo "What computer data would you like to parse? "
 				echo "1. Show All Operating Systems"
-				echo "2. Show All Operating Systems Except _______"
+				echo "2. Find Computers with Unsupported Operating Systems"
 				echo "3. Show Last Time Computer Powered On"
 				echo "4. What Computers Were Logged In Within __ Days"
 				echo "5. Computer Permissions"
-				echo "6. Back"
+				echo "0. Back"
 				while true; do
 					echo 
 					printf "${Blue}ShadowHound${NoColor} > " && read option
-					if [[ "$option" =~ ^(bye|exit|[1-6]$) ]]; then
+					if [[ "$option" =~ ^(bye|exit|[0-6]$) ]]; then
 						break
 					else
 						echo -e "${Red}Error:${NoColor} Invalid input. Enter a number 1-6"
@@ -151,7 +153,7 @@ cat *_users.json | jq --arg domain_sid "$domain_sid" --arg group_name "$group_na
 						;;
 					2)
 						echo ""
-						cat *_computers.json | jq -r '.data[].Properties | select ( .operatingsystem != null ) | select ( .operatingsystem != "Windows 10 Pro" ) | "\u001b[38;2;152;251;152m" + .name  + "\u001b[0m "+ "  :  " + .operatingsystem' | sort -u | awk -F: '{printf("%s:%s\n", $1, $2)}' | column -t -s ':'
+						cat *_computers.json | jq -r '.data[].Properties | select ( .operatingsystem != null ) | select(.operatingsystem | test("(2000|2003|2008|xp|vista|7|me)")) | "\u001b[38;2;152;251;152m" + .name  + "\u001b[0m "+ "  :  " + .operatingsystem' | sort -u | awk -F: '{printf("%s:%s\n", $1, $2)}' | column -t -s ':'
 						echo ""
 						;;
 					3)	
@@ -176,10 +178,11 @@ cat *_users.json | jq --arg domain_sid "$domain_sid" --arg group_name "$group_na
 						;;
 					5)
 						echo ""
-						cat *_computers.json | jq -r '.data[] | select( .Aces[].RightName != null ) | "\u001b[38;2;152;251;152m" + .Properties.name + "\u001b[0m: " + (.Aces | map(.RightName) | join(", "))' | sort -u | awk -F: '{printf("%s:%s\n", $1, $2)}' | column -t -s ':'
+						cat *_users.json | jq '.data[] | .Properties.name as $name | .Aces[] | [$name, .PrincipalSID, .RightName] | join("|")' | sort | awk -F'|' '{ key=$1" | "$2; if (key in arr) { arr[key]=arr[key]", "$3 } else { arr[key]=$3 } } END { for (key in arr) { print key" | "arr[key] } }' | sort | sed 's/"//g' | awk -F'|' '{ printf "\033[38;2;152;251;152m%s\033[0m | %s | %s\n", $1, $2, $3 }' | column -t -s '|'
+
 						echo ""
 						;;
-					6)
+					0)
 						a="0"
 						echo ""
 						;;
@@ -198,11 +201,12 @@ cat *_users.json | jq --arg domain_sid "$domain_sid" --arg group_name "$group_na
 
 				echo "What group data would you like to parse?"
 				echo "1. Group Permissions"
-				echo "2. Back"
+				echo "2. Find Principals with DCSync Rights"
+				echo "0. Back"
 				while true; do
 					echo 
 					printf "${Blue}ShadowHound${NoColor} > " && read option
-					if [[ "$option" =~ ^(bye|exit|[1-2]$) ]]; then
+					if [[ "$option" =~ ^(bye|exit|[0-2]$) ]]; then
 						break
 					else
 						echo -e "${Red}Error:${NoColor} Invalid input. Enter a number 1-2"
@@ -212,10 +216,23 @@ cat *_users.json | jq --arg domain_sid "$domain_sid" --arg group_name "$group_na
 				case $option in
 					1)
 						echo ""
-						cat *_groups.json | jq -r '.data[] | select( .Aces[].RightName != null ) | "\u001b[38;2;152;251;152m" + .Properties.name + "\u001b[0m: " + (.Aces | map(.RightName) | join(", "))' | sort -u | awk -F: '{printf("%s:%s\n", $1, $2)}' | column -t -s ':'
+						cat *_groups.json | jq '.data[] | .Properties.name as $name | .Aces[] | [$name, .PrincipalSID, .RightName] | join("|")' | sort | awk -F'|' '{ key=$1" | "$2; if (key in arr) { arr[key]=arr[key]", "$3 } else { arr[key]=$3 } } END { for (key in arr) { print key" | "arr[key] } }' | sort | sed 's/"//g' | awk -F'|' '{ printf "\033[38;2;152;251;152m%s\033[0m | %s | %s\n", $1, $2, $3 }' | column -t -s '|'
+
 						echo ""
 						;;
 					2)
+						echo ""
+						objectid=$(cat *_groups.json | jq -r '.data[] | .Aces[].PrincipalSID' | sort -u | paste -sd "|")
+						groups=$(cat *_groups.json | jq -r --arg objectid "$objectid" '.data[] | select( .ObjectIdentifier | test("(\($objectid))")) | select( .Aces[].PrincipalSID == .ObjectIdentifier and ["WriteDacl", "Owns", "WriteOwner", "GenericWrite"]) | .Properties.name' | sort -u )
+						while read -r line; do
+							printf "\u001b[38;2;152;251;152m%s\n\u001b[0m" "$line"
+						done <<< "$groups"
+						group_list=$(echo "$groups" | paste -sd '|')
+						users=$(cat *_groups.json | jq -r --arg group_list "$group_list" '.data[] | select( .Properties.name | test("(\($group_list))")) | .Members[].ObjectIdentifier' | sort -u | paste -sd "|")
+						cat *_users.json | jq -r --arg users "$users" '.data[] | select( .ObjectIdentifier | test("(\($users))")) | "\u001b[38;2;152;251;152m" + .Properties.name + "\u001b[0m"' | sort -u
+						echo ""
+						;;
+					0)
 						a="0"
 						echo ""
 						;;
