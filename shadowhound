@@ -14,6 +14,11 @@ echo -e "${Blue}/____/_/ /_/\___^_\____/\____/|__/|__/_/ /_/\____/\____/_/ /_/\_
 echo ""
 echo ""
 
+if ! find . -maxdepth 1 -name "*.json" -print -quit | grep -q .; then
+  echo "Error: No .json files found in the current directory."
+  echo "Please run this script in the directory containing the BloodHound files."
+  exit 1
+fi
 
 while true; do
 	echo "Which category would you like to parse?"
