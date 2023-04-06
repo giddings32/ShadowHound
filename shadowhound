@@ -178,7 +178,7 @@ cat *_users.json | jq --arg domain_sid "$domain_sid" --arg group_name "$group_na
 						;;
 					5)
 						echo ""
-						cat *_users.json | jq '.data[] | .Properties.name as $name | .Aces[] | [$name, .PrincipalSID, .RightName] | join("|")' | sort | awk -F'|' '{ key=$1" | "$2; if (key in arr) { arr[key]=arr[key]", "$3 } else { arr[key]=$3 } } END { for (key in arr) { print key" | "arr[key] } }' | sort | sed 's/"//g' | awk -F'|' '{ printf "\033[38;2;152;251;152m%s\033[0m | %s | %s\n", $1, $2, $3 }' | column -t -s '|'
+						cat *_computers.json | jq '.data[] | .Properties.name as $name | .Aces[] | [$name, .PrincipalSID, .RightName] | join("|")' | sort | awk -F'|' '{ key=$1" | "$2; if (key in arr) { arr[key]=arr[key]", "$3 } else { arr[key]=$3 } } END { for (key in arr) { print key" | "arr[key] } }' | sort | sed 's/"//g' | awk -F'|' '{ printf "\033[38;2;152;251;152m%s\033[0m | %s | %s\n", $1, $2, $3 }' | column -t -s '|'
 
 						echo ""
 						;;
