@@ -5,7 +5,7 @@ My goal is to replicate a lot of the functionality of bloodhound and put it in c
 
 Implemented Features:  
 <ul></ul>
-Users:
+**Users:**
         <ul><ul>
         <li>Show All Users  </li>
         <li>Show All Enabled Users  </li>
@@ -18,7 +18,7 @@ Users:
         <li>User Permissions  </li>
         <li>Domain Admin Accounts  </li>
         </ul></ul>    
-Computers:
+**Computers:**
         <ul><ul>
         <li>Show all Operating Systems  </li>
         <li>Find Computers with Unsupported Operating Systems  </li>
@@ -26,7 +26,7 @@ Computers:
         <li>What Computers were Logged In Within ___ Days  </li>
         <li>Computer Permissions  </li>
         </ul></ul>
-Groups:
+**Groups:**
         <ul><ul>
         <li>Group Permissions  </li>
         <li>Find Principals with DCSync Rights  </li>
