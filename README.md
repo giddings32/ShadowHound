@@ -6,7 +6,8 @@ My goal is to replicate a lot of the functionality of bloodhound and put it in c
 Implemented Features:  
 
 Users:  
-        + Show All Users  
+        <ul>
+        Show All Users  
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Show All Enabled Users  
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Show All Disabled Users  
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Show Enabled Users with Descriptions  
@@ -16,7 +17,7 @@ Users:
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Kerberoastable Accounts  
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;User Permissions  
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Domain Admin Accounts         
-        
+        </ul>
 Computers  
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Show all Operating Systems  
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Find Computers with Unsupported Operating Systems  
