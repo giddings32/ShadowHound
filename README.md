@@ -20,13 +20,13 @@ Users:
         </ul></ul>
     
 Computers:
-        <ul>
+        <ul><ul>
         <li>Show all Operating Systems  </li>
         Find Computers with Unsupported Operating Systems  
         Show Last Time Computer Powered On  
         What Computers were Logged In Within ___ Days  
         Computer Permissions  
-        </li></ul>
+        </ul></ul>
 Groups:
         <ul>
         Group Permissions  
