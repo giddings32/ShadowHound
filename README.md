@@ -28,7 +28,7 @@ Computers:
         <li>Computer Permissions  </li>
         </ul></ul>
 Groups:
-        <ul>
+        <ul><ul>
         <li>Group Permissions  </li>
         <li>Find Principals with DCSync Rights  </li>
-        </ul>
+        </ul></ul>
