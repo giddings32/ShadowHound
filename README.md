@@ -6,25 +6,25 @@ My goal is to replicate a lot of the functionality of bloodhound and put it in c
 Implemented Features:  
 
 Users:  
-&nbsp;Show All Users  
-        Show All Enabled Users  
-        Show All Disabled Users  
-        Show Enabled Users with Descriptions  
-        Show Disabled Users with Descripts  
-        Last Login  
-        No Login Since Before Password Reset  
-        Kerberoastable Accounts  
-        User Permissions  
-        Domain Admin Accounts         
+&nbsp;&nbsp;&nbsp;Show All Users  
+        &nbsp;&nbsp;&nbsp;Show All Enabled Users  
+        &nbsp;&nbsp;&nbsp;Show All Disabled Users  
+        &nbsp;&nbsp;&nbsp;Show Enabled Users with Descriptions  
+        &nbsp;&nbsp;&nbsp;Show Disabled Users with Descripts  
+        &nbsp;&nbsp;&nbsp;Last Login  
+        &nbsp;&nbsp;&nbsp;No Login Since Before Password Reset  
+        &nbsp;&nbsp;&nbsp;Kerberoastable Accounts  
+        &nbsp;&nbsp;&nbsp;User Permissions  
+        &nbsp;&nbsp;&nbsp;Domain Admin Accounts         
         
 Computers  
-        Show all Operating Systems  
-        Find Computers with Unsupported Operating Systems  
-        Show Last Time Computer Powered On  
-        What Computers were Logged In Within ___ Days  
-        Computer Permissions  
+        &nbsp;&nbsp;&nbsp;Show all Operating Systems  
+        &nbsp;&nbsp;&nbsp;Find Computers with Unsupported Operating Systems  
+        &nbsp;&nbsp;&nbsp;Show Last Time Computer Powered On  
+        &nbsp;&nbsp;&nbsp;What Computers were Logged In Within ___ Days  
+        &nbsp;&nbsp;&nbsp;Computer Permissions  
         
 Groups  
-        Group Permissions  
-        Find Principals with DCSync Rights  
+        &nbsp;&nbsp;&nbsp;Group Permissions  
+        &nbsp;&nbsp;&nbsp;Find Principals with DCSync Rights  
        
