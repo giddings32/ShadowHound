@@ -7,28 +7,28 @@ Implemented Features:
 
 Users:
         <ul><ul>
-        Show All Users  
-        Show All Enabled Users  
-        Show All Disabled Users  
-        Show Enabled Users with Descriptions  
-        Show Disabled Users with Descripts  
-        Last Login  
-        No Login Since Before Password Reset  
-        Kerberoastable Accounts  
-        User Permissions  
-        Domain Admin Accounts         
+        <li>Show All Users  </li>
+        <li>Show All Enabled Users  </li>
+        <li>Show All Disabled Users  </li>
+        <li>Show Enabled Users with Descriptions  </li>
+        <li>Show Disabled Users with Descripts  </li>
+        <li>Last Login  </li>
+        <li>No Login Since Before Password Reset  </li>
+        <li>Kerberoastable Accounts  </li>
+        <li>User Permissions  </li>
+        <li>Domain Admin Accounts  </li>
         </ul></ul>
     
 Computers:
         <ul><ul>
-        <li>Show all Operating Systems</li>  
-        Find Computers with Unsupported Operating Systems  
-        Show Last Time Computer Powered On  
-        What Computers were Logged In Within ___ Days  
-        Computer Permissions  
+        <li>Show all Operating Systems  </li>
+        <li>Find Computers with Unsupported Operating Systems  </li>
+        <li>Show Last Time Computer Powered On  </li>
+        <li>What Computers were Logged In Within ___ Days  </li>
+        <li>Computer Permissions  </li>
         </ul></ul>
 Groups:
         <ul>
-        Group Permissions  
-        Find Principals with DCSync Rights  
+        <li>Group Permissions  </li>
+        <li>Find Principals with DCSync Rights  </li>
         </ul>
