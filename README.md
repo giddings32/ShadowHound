@@ -17,7 +17,7 @@ Users:
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Kerberoastable Accounts  
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;User Permissions  
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Domain Admin Accounts         
-        </ul>
+</ul>
 Computers  
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Show all Operating Systems  
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Find Computers with Unsupported Operating Systems  
