@@ -18,14 +18,16 @@ Users:
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;User Permissions  
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Domain Admin Accounts         
         </ul>
-Computers  
+Computers
+        <ul>
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Show all Operating Systems  
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Find Computers with Unsupported Operating Systems  
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Show Last Time Computer Powered On  
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;What Computers were Logged In Within ___ Days  
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Computer Permissions  
-        
-Groups  
+        </ul>
+Groups
+        <ul>
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Group Permissions  
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Find Principals with DCSync Rights  
-       
+        </ul>
