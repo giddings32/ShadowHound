@@ -32,4 +32,6 @@ Groups:
         <li>Find Principals with DCSync Rights  </li>
         </ul></ul>
 
-![image](https://user-images.githubusercontent.com/75488156/233803411-74b58297-c6ae-4db9-9df7-29465c8d14eb.png)
+
+![image](https://user-images.githubusercontent.com/75488156/233803442-85148459-6a3c-41f9-ac49-ebaa191b5772.png)
+
