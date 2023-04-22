@@ -18,14 +18,15 @@ Users:
         User Permissions  
         Domain Admin Accounts         
         </ul></ul>
+    
 Computers:
-        <ul>
+        <ul><li>
         Show all Operating Systems  
         Find Computers with Unsupported Operating Systems  
         Show Last Time Computer Powered On  
         What Computers were Logged In Within ___ Days  
         Computer Permissions  
-        </ul>
+        </li></ul>
 Groups:
         <ul>
         Group Permissions  
