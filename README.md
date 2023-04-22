@@ -17,8 +17,7 @@ Users:
         <li>Kerberoastable Accounts  </li>
         <li>User Permissions  </li>
         <li>Domain Admin Accounts  </li>
-        </ul></ul>
-    
+        </ul></ul>    
 Computers:
         <ul><ul>
         <li>Show all Operating Systems  </li>
