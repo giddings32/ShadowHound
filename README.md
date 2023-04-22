@@ -21,7 +21,7 @@ Users:
     
 Computers:
         <ul><ul>
-        <li>Show all Operating Systems  </li>
+        <li>Show all Operating Systems</li>  
         Find Computers with Unsupported Operating Systems  
         Show Last Time Computer Powered On  
         What Computers were Logged In Within ___ Days  
