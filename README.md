@@ -4,7 +4,7 @@ This is a project I am working on to parse through sharphound data using commman
 My goal is to replicate a lot of the functionality of bloodhound and put it in command line format.  
 
 Implemented Features:  
-
+<ul></ul>
 Users:
         <ul><ul>
         <li>Show All Users  </li>
