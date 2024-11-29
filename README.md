@@ -4,7 +4,7 @@
 
 ShadowHound is a lightweight Bash script designed to parse and analyze Active Directory data extracted from BloodHound JSON files. It provides an intuitive, step-by-step CLI interface to identify users, computers, groups, and their relationships, helping penetration testers and system administrators find potential attack paths and misconfigurations.
 
-## 🎯 Key Features
+## Key Features
 - **Interactive CLI Interface**  
   Step-by-step options for parsing and analyzing user, computer, and group data.
   
@@ -23,7 +23,7 @@ ShadowHound is a lightweight Bash script designed to parse and analyze Active Di
 - **No Dependencies Beyond Bash & jq**  
   The script relies only on the `jq` utility for JSON parsing.
 
-## 🚀 Getting Started
+## Getting Started
 To use ShadowHound, follow these steps:
 
 ### Prerequisites
