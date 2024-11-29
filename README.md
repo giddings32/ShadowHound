@@ -29,6 +29,7 @@ To use ShadowHound, follow these steps:
 ### Prerequisites
 - Bash (Linux or macOS) or a compatible shell on Windows (e.g., Git Bash).
 - The `jq` utility for parsing JSON files:
+
   ```bash
   sudo apt install jq  # Ubuntu/Debian
   brew install jq      # macOS
