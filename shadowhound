@@ -47,7 +47,7 @@ if find . -maxdepth 1 -name "*.json" -print -quit | grep -q .; then
 		echo "$prefixes" | nl -w2 -s'] ' | sed 's/^ */ [/'
 
                 while true; do
-                    read -p "Enter the number corresponding to the prefix you want to use: " choice
+                    read -e -p "Enter the number corresponding to the prefix you want to use: " choice
                     if [[ "$choice" =~ ^[0-9]+$ ]] && [ "$choice" -ge 1 ] && [ "$choice" -le "$prefix_count" ]; then
                         selected_prefix=$(echo "$prefixes" | sed -n "${choice}p")
                         echo "Selected prefix: $selected_prefix"
