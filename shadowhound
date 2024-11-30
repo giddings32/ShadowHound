@@ -47,7 +47,7 @@ if find . -maxdepth 1 -name "*.json" -print -quit | grep -q .; then
 		echo "$prefixes" | nl -w2 -s'] ' | sed 's/^ */ [/'
 
                 while true; do
-                    read -e -p "Enter the number corresponding to the prefix you want to use: " choice
+                    read -p "Enter the number corresponding to the prefix you want to use: " choice
                     if [[ "$choice" =~ ^[0-9]+$ ]] && [ "$choice" -ge 1 ] && [ "$choice" -le "$prefix_count" ]; then
                         selected_prefix=$(echo "$prefixes" | sed -n "${choice}p")
                         echo "Selected prefix: $selected_prefix"
@@ -82,7 +82,7 @@ fi
 if [ "$use_current_dir" != true ]; then
     while true; do
 	restore_and_clear
-        read -p "Enter the path to the folder containing SharpHound JSON files: " data_folder
+        read -e -p "Enter the path to the folder containing SharpHound JSON files: " data_folder
 
         # Expand ~ to $HOME if used
         data_folder=${data_folder/#\~/$HOME}
