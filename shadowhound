@@ -3,264 +3,393 @@
 Red="\e[31m"
 Blue="\e[34m"
 Green='\u001b[38;2;152;251;152m'
+GOLD='\e[38;2;255;215;0m'
 NoColor2="\u001b[0m"
 NoColor="\e[0m"
 
-echo -e "   _____ __              __              __  __                      ${Blue}__${NoColor}"
-echo -e "  / ___// /_   ____ ____/ /___ _      __/ / / /___  __  ${Blue}______  ____/ /${NoColor}"
-echo -e "  \__ \/ __ \/ __  / __  / __ \ | /| / / /${Blue}_/ / __ \/ / / / __ \/ __  /${NoColor} "
-echo -e " ___/ / / / / /_/ / /${Blue}_/ / /_/ / |/ |/ / __  / /_/ / /_/ / / / / /_/ /${NoColor}  "
-echo -e "${Blue}/____/_/ /_/\___^_\____/\____/|__/|__/_/ /_/\____/\____/_/ /_/\____/${NoColor}   "
-echo ""
-echo ""
 
-if ! find . -maxdepth 1 -name "*.json" -print -quit | grep -q .; then
-  echo "Error: No .json files found in the current directory."
-  echo "Please run this script in the directory containing the BloodHound files."
-  exit 1
+draw_banner() {
+    echo -e "   _____ __              __              __  __                      ${Blue}__${NoColor}"
+    echo -e "  / ___// /_   ____ ____/ /___ _      __/ / / /___  __  ${Blue}______  ____/ /${NoColor}"
+    echo -e "  \__ \/ __ \/ __  / __  / __ \ | /| / / /${Blue}_/ / __ \/ / / / __ \/ __  /${NoColor} "
+    echo -e " ___/ / / / / /_/ / /${Blue}_/ / /_/ / |/ |/ / __  / /_/ / /_/ / / / / /_/ /${NoColor}  "
+    echo -e "${Blue}/____/_/ /_/\___^_\____/\____/|__/|__/_/ /_/\____/\____/_/ /_/\____/${NoColor}   "
+    echo ""
+    echo ""
+}
+
+restore_and_clear() {
+    clear
+    draw_banner
+}
+
+# Check the current directory for JSON files
+restore_and_clear
+if find . -maxdepth 1 -name "*.json" -print -quit | grep -q .; then
+    echo "JSON files were found in the current directory."
+    read -p "Do you want to use the JSON files in the current directory? (yes/no): " use_current
+    case "$use_current" in
+        [Yy][Ee][Ss]|[Yy])
+            # Extract unique prefixes
+            prefixes=$(find . -maxdepth 1 -name "*.json" -exec basename {} \; | awk -F_ '{print $1}' | sort -u)
+
+            # Count the number of unique prefixes
+            prefix_count=$(echo "$prefixes" | wc -l)
+
+            if [ "$prefix_count" -eq 1 ]; then
+                # If only one prefix exists, use it automatically
+                selected_prefix=$(echo "$prefixes")
+                echo "Using JSON files with prefix: $selected_prefix"
+            else
+                restore_and_clear
+                # Prompt the user to select a prefix
+                echo "Multiple JSON file sets detected:"
+		echo "$prefixes" | nl -w2 -s'] ' | sed 's/^ */ [/'
+
+                while true; do
+                    read -p "Enter the number corresponding to the prefix you want to use: " choice
+                    if [[ "$choice" =~ ^[0-9]+$ ]] && [ "$choice" -ge 1 ] && [ "$choice" -le "$prefix_count" ]; then
+                        selected_prefix=$(echo "$prefixes" | sed -n "${choice}p")
+                        echo "Selected prefix: $selected_prefix"
+                        break
+                    else
+                        echo "Invalid choice. Please enter a valid number."
+                    fi
+                done
+            fi
+
+            # Filter JSON files based on the selected prefix
+            data_files=$(find . -maxdepth 1 -name "${selected_prefix}_*.json" -exec basename {} \;)
+            echo "Using the following JSON files:"
+            echo "$data_files"
+
+            # Set the current directory and prevent further directory prompts
+            data_folder=$(pwd)
+            echo "Using JSON files in the current directory: $data_folder"
+            use_current_dir=true
+            ;;
+        *)
+            echo "Please specify the path to the folder containing SharpHound JSON files."
+            use_current_dir=false
+            ;;
+    esac
+else
+    echo "No JSON files found in the current directory."
+    use_current_dir=false
 fi
 
-while true; do
-	echo "Which category would you like to parse?"
-	echo "1. Users"
-	echo "2. Computers"
-	echo "3. Groups"
+# Only prompt for a new directory if not using the current directory
+if [ "$use_current_dir" != true ]; then
+    while true; do
+	restore_and_clear
+        read -p "Enter the path to the folder containing SharpHound JSON files: " data_folder
 
-	while true; do
-		echo
-		printf "${Blue}ShadowHound${NoColor} > " && read option
-		if [[ "$option" =~ ^(bye|exit|[1-3]$) ]]; then
-                        echo ""
+        # Expand ~ to $HOME if used
+        data_folder=${data_folder/#\~/$HOME}
+
+        # Validate the folder and check for JSON files
+        if [ -d "$data_folder" ]; then
+            prefixes=$(find "$data_folder" -maxdepth 1 -name "*.json" -exec basename {} \; | awk -F_ '{print $1}' | sort -u)
+            prefix_count=$(echo "$prefixes" | wc -l)
+
+            if [ "$prefix_count" -eq 1 ]; then
+                selected_prefix=$(echo "$prefixes")
+                echo "Using JSON files with prefix: $selected_prefix"
+            else
+                restore_and_clear
+                echo "Multiple JSON file sets detected:"
+                echo "$prefixes" | nl -w2 -s'] ' | sed 's/^ */ [/' 
+
+                while true; do
+                    read -p "Enter the number corresponding to the prefix you want to use: " choice
+                    if [[ "$choice" =~ ^[0-9]+$ ]] && [ "$choice" -ge 1 ] && [ "$choice" -le "$prefix_count" ]; then
+                        selected_prefix=$(echo "$prefixes" | sed -n "${choice}p")
+                        echo "Selected prefix: $selected_prefix"
                         break
+                    else
+                        echo "Invalid choice. Please enter a valid number."
+                    fi
+                done
+            fi
 
-		else
-			echo -e "${Red}Error:${NoColor} Invalid input. Select an option 1-4"
-		fi
-	done
-	case $option in
-		1)	
-			a="1"
-			while [[ ${a} == "1" ]]; do
-				echo "What user data would you like to parse?"
-				echo "1.  Show All Users"
-				echo "2.  Show All Enabled Users"
-				echo "3.  Show All Disabled Users"
-				echo "4.  Show Enabled Users with Description"
-				echo "5.  Show Disabled Users with Description"
-				echo "6.  Last Login"
-				echo "7.  No Login Since Before Password Reset"
-				echo "8.  Kerberoastable Accounts"
-				echo "9.  User Permissions"
-				echo "10. Domain Admin Accounts"
-				echo "0.  Back"
+            data_files=$(find "$data_folder" -maxdepth 1 -name "${selected_prefix}_*.json" -exec basename {} \;)
+            echo "Using the following JSON files:"
+            echo "$data_files"
 
-				while true; do
-					echo 
-					printf "${Blue}ShadowHound${NoColor} > " && read option
-					if [[ $option =~ ^(bye|exit|[0-9]$|^10$) ]]; then	
-						break
-					else
-						echo -e "${Red}Error:${NoColor} Invalid input. Select an Option 1-10"
-					fi
-				done
+            echo "SharpHound data directory set to: $data_folder"
+            cd "$data_folder" || exit
+            break
+        else
+            echo "Error: The specified folder does not exist."
+        fi
+    done
+fi
 
-				case $option in
-					1)
-						echo ""
-						cat *_users.json | jq -r '.data[].Properties | select( .enabled == true ) | "\u001b[38;2;152;251;152m" + .name + "\u001b[0m "'
-						echo ""
-						;;
-					2)
-						echo ""
-						cat *_users.json | jq -r '.data[].Properties | select( .enabled == true ) | "\u001b[38;2;152;251;152m" + .name + "\u001b[0m "'
-						echo ""
-						;;
-					3)
-						echo ""
-						cat *_users.json | jq -r '.data[].Properties | select( .enabled == false ) | "\u001b[38;2;152;251;152m" + .name + "\u001b[0m "'
-						echo ""
-						;;
-					4)     	
-						echo ""
-						cat *_users.json | jq -r '.data[].Properties | select( .enabled == true ) | select( .description != null ) | "\u001b[38;2;152;251;152m" + .name + "\u001b[0m: " + .description' | sort -u | awk -F: '{printf("%s:%s\n", $1, $2)}' | column -t -s ':'
-						echo ""
-						;;
-					5)
-						echo ""
-						cat *_users.json | jq -r '.data[].Properties | select( .enabled == false ) | select( .description != null ) | "\u001b[38;2;152;251;152m" + .name + "\u001b[0m: " + .description' | sort -u | awk -F: '{printf("%s:%s\n", $1, $2)}' | column -t -s ':'
-						echo ""
-						;;
-					6)
-						echo ""
-						cat *_users.json | jq -r '.data[].Properties | select( .enabled == true ) | "\u001b[38;2;152;251;152m" + .name + "\u001b[0m " + "  :  " + (.lastlogontimestamp|tostring) ' | sort -u | awk -F: '{printf("%s:%s\n", $1, $2)}' | column -t -s ':'
-						echo ""
-						;;
-					7)
-						echo ""
-						cat *_users.json | jq -r '.data[].Properties | select( .enabled == true ) | select( .pwdlastset > .lastlogontimestamp ) | "\u001b[38;2;152;251;152m" + .name + "\u001b[0m " + "  :  " + (.lastlogontimestamp|tostring) ' | sort -u | awk -F: '{printf("%s:%s\n", $1, $2)}' | column -t -s ':'
-						echo ""
-						;;
-					8)
-						echo ""
-						cat *_users.json | jq -r '.data[].Properties | select( .serviceprincipalnames != [] ) | "\u001b[38;2;152;251;152m" + .name + "\u001b[0m "'
-						echo ""
-						;;
-					9)
-						echo ""
-						cat *_users.json | jq '.data[] | .Properties.name as $name | .Aces[] | [$name, .PrincipalSID, .RightName] | join("|")' | sort | awk -F'|' '{ key=$1" | "$2; if (key in arr) { arr[key]=arr[key]", "$3 } else { arr[key]=$3 } } END { for (key in arr) { print key" | "arr[key] } }' | sort | sed 's/"//g' | awk -F'|' '{ printf "\033[38;2;152;251;152m%s\033[0m | %s | %s\n", $1, $2, $3 }' | column -t -s '|'
-						echo ""
-						;;
-					
-					10)
-						echo ""
-						group_name=$(jq -r '.data[].Properties | select(.name | contains("DOMAIN ADMINS")) | .name' *_groups.json)
-domain_sid=$(jq -r '.data[].Properties | select(.name | contains("DOMAIN ADMINS")) | .domainsid' *_groups.json)
-cat *_users.json | jq --arg domain_sid "$domain_sid" --arg group_name "$group_name" -r '[.data[] | select(.Properties.domainsid == $domain_sid) | select(.Properties.admincount == true) | select(.Properties.enabled == true)] | "\u001b[38;2;152;251;152m" + $group_name + "\u001b[0m: " + (map(.Properties.name) | join(", "))' | sort -u | awk -F: '{printf("%s:%s\n", $1, $2)}' | column -t -s ':'
-						echo ""
-						;;
-					0)
-						a="0"
-						echo ""
-						;;
-					bye|exit)
-                                                echo "Thank you for using ShadowHound!"
-                                                exit
-                                                ;;
-				esac
-			done
-			;;
+# Proceed with the rest of the script here
 
-		2)
-			a="1"
-			while [[ ${a} == "1" ]]; do
-				echo "What computer data would you like to parse? "
-				echo "1. Show All Operating Systems"
-				echo "2. Find Computers with Unsupported Operating Systems"
-				echo "3. Show Last Time Computer Powered On"
-				echo "4. What Computers Were Logged In Within __ Days"
-				echo "5. Computer Permissions"
-				echo "0. Back"
-				while true; do
-					echo 
-					printf "${Blue}ShadowHound${NoColor} > " && read option
-					if [[ "$option" =~ ^(bye|exit|[0-6]$) ]]; then
-						break
-					else
-						echo -e "${Red}Error:${NoColor} Invalid input. Enter a number 1-6"
-					fi
-				done
+while true; do
+    restore_and_clear
+    echo "Select Data to Analyze:"
+    echo " [1] User Data"
+    echo " [2] Computer Data"
+    echo " [3] Group Data"
+    echo ""
+    echo "[exit/bye] Close ShadowHound"
 
-				case $option in
-					1)
-						echo ""
-						cat *_computers.json | jq -r '.data[].Properties | select ( .operatingsystem != null ) | "\u001b[38;2;152;251;152m" + .name  + "\u001b[0m "+ "  :  " + .operatingsystem' | sort -u | awk -F: '{printf("%s:%s\n", $1, $2)}' | column -t -s ':'
-						echo ""
-						;;
-					2)
-						echo ""
-						cat *_computers.json | jq -r '.data[].Properties | select ( .operatingsystem != null ) | select(.operatingsystem | test("(2000|2003|2008|xp|vista|7|me)")) | "\u001b[38;2;152;251;152m" + .name  + "\u001b[0m "+ "  :  " + .operatingsystem' | sort -u | awk -F: '{printf("%s:%s\n", $1, $2)}' | column -t -s ':'
-						echo ""
-						;;
-					3)	
-						echo ""
-						cat *_computers.json | jq -r '.data[].Properties | "\u001b[38;2;152;251;152m" + .name  + "\u001b[0m "+ "  :  " + (.lastlogontimestamp|todate)' | sort -u | awk -F: '{printf("%s:%s\n", $1, $2)}' | column -t -s ':'
-						echo ""
-						;;
-					4)     	
-						while true; do
-							echo 
-							read -p "How many days back are you looking? " days
-							if [[ "$days" =~ ^[0-9]+$ ]]; then
-								break
-							else
-							echo -e "${Red}Error:${NoColor} Invalid input. Please enter an integer."
-							fi
-						done
-						days=$((days))
-						echo ""
-						cat *_computers.json | jq -r --argjson days "$days" '.data[].Properties | select( .lastlogontimestamp > (86400 * $days)) | "\u001b[38;2;152;251;152m" + .name  + "\u001b[0m: "+ " was online " + ((now - .lastlogontimestamp) / 86400|round|tostring) + " Days Ago"' | sort -u | awk -F: '{printf("%s:%s\n", $1, $2)}' | column -t -s ':'
-						echo ""
-						;;
-					5)
-						echo ""
-						cat *_computers.json | jq '.data[] | .Properties.name as $name | .Aces[] | [$name, .PrincipalSID, .RightName] | join("|")' | sort | awk -F'|' '{ key=$1" | "$2; if (key in arr) { arr[key]=arr[key]", "$3 } else { arr[key]=$3 } } END { for (key in arr) { print key" | "arr[key] } }' | sort | sed 's/"//g' | awk -F'|' '{ printf "\033[38;2;152;251;152m%s\033[0m | %s | %s\n", $1, $2, $3 }' | column -t -s '|'
+    while true; do
+        echo
+        printf "${Blue}ShadowHound${NoColor} > " && read option
+        if [[ "$option" =~ ^(bye|exit|[1-3]$) ]]; then
+            echo ""
+            break
+        else
+            echo -e "${Red}Error:${NoColor} Invalid input. Select an option 1-4"
+        fi
+    done
+    case $option in
+        1)    
+            a="1"
+            while [[ ${a} == "1" ]]; do
+		restore_and_clear
+                echo "User Data Options:"
+                echo " [1] List All Users"
+                echo " [2] List Enabled Users"
+                echo " [3] List Disabled Users"
+                echo " [4] List Enabled Users with Description"
+                echo " [5] List Disabled Users with Description"
+                echo " [6] Last Login Details"
+                echo " [7] Users with No Login Post-Password Reset"
+                echo " [8] Accounts Eligible for Kerberoasting"
+                echo " [9] User Permissions Overview"
+                echo "[10] Domain Admin Accounts"
+                echo " [0] Back to Main Menu"
+     		echo ""
+                echo "[exit/bye] Close ShadowHound"
 
-						echo ""
-						;;
-					0)
-						a="0"
-						echo ""
-						;;
-					bye|exit)
-                                                echo "Thank you for using ShadowHound!"
-                                                exit
-                                                ;;
-				esac
+                while true; do
+                    echo 
+                    printf "${Blue}ShadowHound${NoColor} > " && read option
+                    if [[ $option =~ ^(bye|exit|[0-9]$|^10$) ]]; then    
+                        break
+                    else
+                        echo -e "${Red}Error:${NoColor} Invalid input. Select an Option 1-10"
+                    fi
+                done
 
-			done
-			;;
-
-		3)
-			a="1"
-			while [[ ${a} == "1" ]]; do
-
-				echo "What group data would you like to parse?"
-				echo "1. Group Permissions"
-				echo "2. Find Principals with DCSync Rights"
-				echo "0. Back"
-				while true; do
-					echo 
-					printf "${Blue}ShadowHound${NoColor} > " && read option
-					if [[ "$option" =~ ^(bye|exit|[0-2]$) ]]; then
-						break
-					else
-						echo -e "${Red}Error:${NoColor} Invalid input. Enter a number 1-2"
-					fi
-				done
-
-				case $option in
-					1)
-						echo ""
-						cat *_groups.json | jq '.data[] | .Properties.name as $name | .Aces[] | [$name, .PrincipalSID, .RightName] | join("|")' | sort | awk -F'|' '{ key=$1" | "$2; if (key in arr) { arr[key]=arr[key]", "$3 } else { arr[key]=$3 } } END { for (key in arr) { print key" | "arr[key] } }' | sort | sed 's/"//g' | awk -F'|' '{ printf "\033[38;2;152;251;152m%s\033[0m | %s | %s\n", $1, $2, $3 }' | column -t -s '|'
-
-						echo ""
-						;;
-					2)
-						echo ""
-						objectid=$(cat *_groups.json | jq -r '.data[] | .Aces[].PrincipalSID' | sort -u | paste -sd "|")
-						groups=$(cat *_groups.json | jq -r --arg objectid "$objectid" '.data[] | select( .ObjectIdentifier | test("(\($objectid))")) | select( .Aces[].PrincipalSID == .ObjectIdentifier and ["WriteDacl", "Owns", "WriteOwner", "GenericWrite"]) | .Properties.name' | sort -u )
-						echo "Groups:"
-						while read -r line; do
-							printf "\u001b[38;2;152;251;152m%s\n\u001b[0m" "$line"
-						done <<< "$groups"
-						group_list=$(echo "$groups" | paste -sd '|')
-
-						users=$(cat *_groups.json | jq -r --arg group_list "$group_list" '.data[] | select( .Properties.name | test("(\($group_list))")) | .Members[].ObjectIdentifier' | sort -u | paste -sd "|")
-						echo "Users:"
-						cat *_users.json | jq -r --arg users "$users" '.data[] | select( .ObjectIdentifier | test("(\($users))")) | "\u001b[38;2;152;251;152m" + .Properties.name + "\u001b[0m"' | sort -u
-
-						dc=$(cat *_groups.json | jq -r '.data[] | select(.Properties.samaccountname == "Domain Controllers") | .ObjectIdentifier' | sort -u | paste -sd "|")
-						comps=$(cat *_groups.json | jq -r '.data[] | select(.Properties.name | contains("ENTERPRISE DOMAIN CONTROLLERS")) | .Members[].ObjectIdentifier' | sort -u | paste -sd "|")
-						echo "Computers:"
-						cat *_computers.json | jq -r --arg comps "$comps" --arg dc "$dc" '.data[] | select( .PrimaryGroupSID == $dc) | select(.ObjectIdentifier == $comps ) | "\u001b[38;2;152;251;152m" + .Properties.name + "\u001b[0m"' | sort -u
-						echo ""
-						;;
-					0)
-						a="0"
-						echo ""
-						;;
-					bye|exit)
-                                                echo "Thank you for using ShadowHound!"
-                                                exit
-                                                ;;
-				esac
-
-			done
-			;;
-
-		bye|exit)
-                        echo "Thank you for using ShadowHound!"
+                case $option in
+                    1)
+                        echo ""
+                        cat ${selected_prefix}_users.json | jq -r '.data[].Properties | select( .enabled == true ) | "\u001b[38;2;152;251;152m" + .name + "\u001b[0m "'
+                        echo ""
+                        read -p "Press Enter to return to the menu..."
+                        ;;
+                    2)
+                        echo ""
+                        cat ${selected_prefix}_users.json | jq -r '.data[].Properties | select( .enabled == true ) | "\u001b[38;2;152;251;152m" + .name + "\u001b[0m "'
+                        echo ""
+                        read -p "Press Enter to return to the menu..."
+                        ;;
+                    3)
+                        echo ""
+                        cat ${selected_prefix}_users.json | jq -r '.data[].Properties | select( .enabled == false ) | "\u001b[38;2;152;251;152m" + .name + "\u001b[0m "'
+                        echo ""
+                        read -p "Press Enter to return to the menu..."
+                        ;;
+                    4)         
+                        echo ""
+                        cat ${selected_prefix}_users.json | jq -r '.data[].Properties | select( .enabled == true ) | select( .description != null ) | "\u001b[38;2;152;251;152m" + .name + "\u001b[0m: " + .description' | sort -u | awk -F: '{printf("%s:%s\n", $1, $2)}' | column -t -s ':'
+                        echo ""
+                        read -p "Press Enter to return to the menu..."
+                        ;;
+                    5)
+                        echo ""
+                        cat ${selected_prefix}_users.json | jq -r '.data[].Properties | select( .enabled == false ) | select( .description != null ) | "\u001b[38;2;152;251;152m" + .name + "\u001b[0m: " + .description' | sort -u | awk -F: '{printf("%s:%s\n", $1, $2)}' | column -t -s ':'
+                        echo ""
+                        read -p "Press Enter to return to the menu..."
+                        ;;
+                    6)
+                        echo ""
+                        cat ${selected_prefix}_users.json | jq -r '.data[].Properties | select( .enabled == true ) | "\u001b[38;2;152;251;152m" + .name + "\u001b[0m " + "  :  " + (.lastlogontimestamp|tostring) ' | sort -u | awk -F: '{printf("%s:%s\n", $1, $2)}' | column -t -s ':'
+                        echo ""
+                        read -p "Press Enter to return to the menu..."
+                        ;;
+                    7)
+                        echo ""
+                        cat ${selected_prefix}_users.json | jq -r '.data[].Properties | select( .enabled == true ) | select( .pwdlastset > .lastlogontimestamp ) | "\u001b[38;2;152;251;152m" + .name + "\u001b[0m " + "  :  " + (.lastlogontimestamp|tostring) ' | sort -u | awk -F: '{printf("%s:%s\n", $1, $2)}' | column -t -s ':'
+                        echo ""
+                        read -p "Press Enter to return to the menu..."
+                        ;;
+                    8)
+                        echo ""
+                        cat ${selected_prefix}_users.json | jq -r '.data[].Properties | select( .serviceprincipalnames != [] ) | "\u001b[38;2;152;251;152m" + .name + "\u001b[0m "'
+                        echo ""
+                        read -p "Press Enter to return to the menu..."
+                        ;;
+                    9)
+                        echo ""
+                        cat ${selected_prefix}_users.json | jq '.data[] | .Properties.name as $name | .Aces[] | [$name, .PrincipalSID, .RightName] | join("|")' | sort | awk -F'|' '{ key=$1" | "$2; if (key in arr) { arr[key]=arr[key]", "$3 } else { arr[key]=$3 } } END { for (key in arr) { print key" | "arr[key] } }' | sort | sed 's/"//g' | awk -F'|' '{ printf "\033[38;2;152;251;152m%s\033[0m | %s | %s\n", $1, $2, $3 }' | column -t -s '|'
+                        echo ""
+                        read -p "Press Enter to return to the menu..."
+                        ;;
+                    
+                    10)
+                        echo ""
+                        group_name=$(jq -r '.data[].Properties | select(.name | contains("DOMAIN ADMINS")) | .name' ${selected_prefix}_groups.json)
+domain_sid=$(jq -r '.data[].Properties | select(.name | contains("DOMAIN ADMINS")) | .domainsid' ${selected_prefix}_groups.json)
+cat ${selected_prefix}_users.json | jq --arg domain_sid "$domain_sid" --arg group_name "$group_name" -r '[.data[] | select(.Properties.domainsid == $domain_sid) | select(.Properties.admincount == true) | select(.Properties.enabled == true)] | "\u001b[38;2;152;251;152m" + $group_name + "\u001b[0m: " + (map(.Properties.name) | join(", "))' | sort -u | awk -F: '{printf("%s:%s\n", $1, $2)}' | column -t -s ':'
+                        echo ""
+                        read -p "Press Enter to return to the menu..."
+                        ;;
+                    0)
+                        a="0"
+                        echo ""
+                        ;;
+                    bye|exit)
+                        echo "Exiting ShadowHound... Goodbye"
                         exit
                         ;;
-	esac
+                esac
+            done
+            ;;
+
+        2)
+            a="1"
+            while [[ ${a} == "1" ]]; do
+		restore_and_clear
+                echo "Computer Data Options "
+                echo " [1] List All Operating Systems"
+                echo " [2] Find Computers with Unsupported Operating Systems"
+                echo " [3] View Last Time Computer was Powered On"
+                echo " [4] Find Computers Logged In Within __ Days"
+                echo " [5] Computer Permissions Overview"
+                echo " [0] Back to Main Menu"
+                echo ""
+                echo "[exit/bye] Close ShadowHound"
+
+                while true; do
+                    echo 
+                    printf "${Blue}ShadowHound${NoColor} > " && read option
+                    if [[ "$option" =~ ^(bye|exit|[0-6]$) ]]; then
+                        break
+                    else
+                        echo -e "${Red}Error:${NoColor} Invalid input. Enter a number 1-6"
+                    fi
+                done
+
+                case $option in
+                    1)
+                        echo ""
+                        cat ${selected_prefix}_computers.json | jq -r '.data[].Properties | select ( .operatingsystem != null ) | "\u001b[38;2;152;251;152m" + .name  + "\u001b[0m "+ "  :  " + .operatingsystem' | sort -u | awk -F: '{printf("%s:%s\n", $1, $2)}' | column -t -s ':'
+                        echo ""
+                        read -p "Press Enter to return to the menu..."
+                        ;;
+                    2)
+                        echo ""
+                        cat ${selected_prefix}_computers.json | jq -r '.data[].Properties | select ( .operatingsystem != null ) | select(.operatingsystem | test("(2000|2003|2008|xp|vista|7|me)")) | "\u001b[38;2;152;251;152m" + .name  + "\u001b[0m "+ "  :  " + .operatingsystem' | sort -u | awk -F: '{printf("%s:%s\n", $1, $2)}' | column -t -s ':'
+                        echo ""
+                        read -p "Press Enter to return to the menu..."
+                        ;;
+                    3)    
+                        echo ""
+                        cat ${selected_prefix}_computers.json | jq -r '.data[].Properties | "\u001b[38;2;152;251;152m" + .name  + "\u001b[0m "+ "  :  " + (.lastlogontimestamp|todate)' | sort -u | awk -F: '{printf("%s:%s\n", $1, $2)}' | column -t -s ':'
+                        echo ""
+                        ;;
+                    4)         
+                        while true; do
+                            echo 
+                            read -p "How many days back are you looking? " days
+                            if [[ "$days" =~ ^[0-9]+$ ]]; then
+                                break
+                            else
+                            echo -e "${Red}Error:${NoColor} Invalid input. Please enter an integer."
+                            fi
+                        done
+                        days=$((days))
+                        echo ""
+                        cat ${selected_prefix}_computers.json | jq -r --argjson days "$days" '.data[].Properties | select( .lastlogontimestamp > (86400 * $days)) | "\u001b[38;2;152;251;152m" + .name  + "\u001b[0m: "+ " was online " + ((now - .lastlogontimestamp) / 86400|round|tostring) + " Days Ago"' | sort -u | awk -F: '{printf("%s:%s\n", $1, $2)}' | column -t -s ':'
+                        echo ""
+                        read -p "Press Enter to return to the menu..."
+                        ;;
+                    5)
+                        echo ""
+                        cat ${selected_prefix}_computers.json | jq '.data[] | .Properties.name as $name | .Aces[] | [$name, .PrincipalSID, .RightName] | join("|")' | sort | awk -F'|' '{ key=$1" | "$2; if (key in arr) { arr[key]=arr[key]", "$3 } else { arr[key]=$3 } } END { for (key in arr) { print key" | "arr[key] } }' | sort | sed 's/"//g' | awk -F'|' '{ printf "\033[38;2;152;251;152m%s\033[0m | %s | %s\n", $1, $2, $3 }' | column -t -s '|'
+
+                        echo ""
+                        read -p "Press Enter to return to the menu..."
+                        ;;
+                    0)
+                        a="0"
+                        echo ""
+                        ;;
+                    bye|exit)
+                        echo "Exiting ShadowHound... Goodbye"
+                        exit
+                        ;;
+                esac
+            done
+            ;;
+
+        3)
+            a="1"
+            while [[ ${a} == "1" ]]; do
+		restore_and_clear
+                echo "Group Data Options"
+                echo " [1] Group Permissions Overview"
+                echo " [2] Identify Principals with DCSync Rights"
+                echo " [0] Back to Main Menu"
+                echo ""
+                echo "[exit/bye] Close ShadowHound"
+
+		while true; do
+                    echo 
+                    printf "${Blue}ShadowHound${NoColor} > " && read option
+                    if [[ "$option" =~ ^(bye|exit|[0-2]$) ]]; then
+                        break
+                    else
+                        echo -e "${Red}Error:${NoColor} Invalid input. Enter a number 1-2"
+                    fi
+                done
+
+                case $option in
+                    1)
+                        echo ""
+                        cat ${selected_prefix}_groups.json | jq '.data[] | .Properties.name as $name | .Aces[] | [$name, .PrincipalSID, .RightName] | join("|")' | sort | awk -F'|' '{ key=$1" | "$2; if (key in arr) { arr[key]=arr[key]", "$3 } else { arr[key]=$3 } } END { for (key in arr) { print key" | "arr[key] } }' | sort | sed 's/"//g' | awk -F'|' '{ printf "\033[38;2;152;251;152m%s\033[0m | %s | %s\n", $1, $2, $3 }' | column -t -s '|'
+                        echo ""
+                        read -p "Press Enter to return to the menu..."
+                        ;;
+                    2)
+                        echo ""
+                        objectid=$(cat ${selected_prefix}_groups.json | jq -r '.data[] | .Aces[].PrincipalSID' | sort -u | paste -sd "|")
+                        groups=$(cat ${selected_prefix}_groups.json | jq -r --arg objectid "$objectid" '.data[] | select( .ObjectIdentifier | test("(\($objectid))")) | select( .Aces[].PrincipalSID == .ObjectIdentifier and ["WriteDacl", "Owns", "WriteOwner", "GenericWrite"]) | .Properties.name' | sort -u )
+                        echo "Groups:"
+                        while read -r line; do
+                            printf "\u001b[38;2;152;251;152m%s\n\u001b[0m" "$line"
+                        done <<< "$groups"
+                        group_list=$(echo "$groups" | paste -sd '|')
+                        users=$(cat ${selected_prefix}_groups.json | jq -r --arg group_list "$group_list" '.data[] | select( .Properties.name | test("(\($group_list))")) | .Members[].ObjectIdentifier' | sort -u | paste -sd "|")
+                        echo "Users:"
+                        cat ${selected_prefix}_users.json | jq -r --arg users "$users" '.data[] | select( .ObjectIdentifier | test("(\($users))")) | "\u001b[38;2;152;251;152m" + .Properties.name + "\u001b[0m"' | sort -u
+                        dc=$(cat ${selected_prefix}_groups.json | jq -r '.data[] | select(.Properties.samaccountname == "Domain Controllers") | .ObjectIdentifier' | sort -u | paste -sd "|")
+                        comps=$(cat ${selected_prefix}_groups.json | jq -r '.data[] | select(.Properties.name | contains("ENTERPRISE DOMAIN CONTROLLERS")) | .Members[].ObjectIdentifier' | sort -u | paste -sd "|")
+                        echo "Computers:"
+                        cat ${selected_prefix}_computers.json | jq -r --arg comps "$comps" --arg dc "$dc" '.data[] | select( .PrimaryGroupSID == $dc) | select(.ObjectIdentifier == $comps ) | "\u001b[38;2;152;251;152m" + .Properties.name + "\u001b[0m"' | sort -u
+                        echo ""
+                        read -p "Press Enter to return to the menu..."
+                        ;;
+                    0)
+                        a="0"
+                        echo ""
+                        ;;
+                    bye|exit)
+                        echo "Exiting ShadowHound... Goodbye"
+                        exit
+                        ;;
+                esac
+            done
+            ;;
+        bye|exit)
+            echo "Exiting ShadowHound... Goodbye"
+            exit
+            ;;
+    esac
 done
